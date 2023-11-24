@@ -6,7 +6,7 @@ class LogoPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
@@ -20,7 +20,7 @@ class LogoPage extends StatelessWidget{
           children: <Widget>[
             // Insérez votre logo ici (remplacez AssetImage par votre image)
             loadLogoImage(),
-            SizedBox(height: 20), // Espacement
+            const SizedBox(height: 20), // Espacement
           ],
         ),
       ),
