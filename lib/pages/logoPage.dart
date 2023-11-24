@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'loginPage.dart';
-import 'homePage.dart';
 
 
 class LogoPage extends StatelessWidget{
@@ -31,7 +30,7 @@ class LogoPage extends StatelessWidget{
   Widget loadLogoImage() {
     try {
       return Image.asset(
-        'assets/img/logo.png',
+        'assets/img/log_remove_bg.png',
         width: 350, // Ajustez la largeur selon vos besoins
         height: 350, // Ajustez la hauteur selon vos besoins
       );
