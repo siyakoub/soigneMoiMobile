@@ -4,11 +4,11 @@ import 'package:soigne_moi_mobile/interfaces/medecin/medecinCreation.dart';
 import 'package:soigne_moi_mobile/interfaces/medecin/medecinUpdate.dart';
 
 class MedecinService {
-  final String baseUrl = 'http://127.0.0.1:5000/api/medecin';
+  final String baseUrl = 'https://api.soigne-moi-app.fr/api/medecin';
 
   Future<List<dynamic>> getAllMedecins() async {
     final response = await http.get(
-      Uri.parse('/medecins'),
+      Uri.parse('$baseUrl/medecins'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -24,7 +24,7 @@ class MedecinService {
 
   Future<List<dynamic>> getAllMedecinsActif() async {
     final response = await http.get(
-      Uri.parse('/medecins/actif'),
+      Uri.parse('$baseUrl/medecins/actif'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -40,7 +40,7 @@ class MedecinService {
 
   Future<List<dynamic>> getAllMedecinsInactif() async {
     final response = await http.get(
-      Uri.parse('/medecins/inactif'),
+      Uri.parse('$baseUrl/medecins/inactif'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -56,7 +56,7 @@ class MedecinService {
 
   Future<Map<String, dynamic>> getMedecinById(int idMedecin) async {
     final response = await http.get(
-      Uri.parse('/medecins/$idMedecin'),
+      Uri.parse('$baseUrl/medecins/$idMedecin'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -72,7 +72,7 @@ class MedecinService {
   
   Future<Map<String, dynamic>> getMedecinByUserId(int user_id) async {
     final response = await http.get(
-      Uri.parse('/medecins/$user_id/byUser'),
+      Uri.parse('$baseUrl/medecins/$user_id/byUser'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -88,7 +88,7 @@ class MedecinService {
 
   Future<Map<String, dynamic>> getMedecinByEmail(String email) async {
     final response = await http.get(
-      Uri.parse('/medecins/$email'),
+      Uri.parse('$baseUrl/medecins/$email'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -104,7 +104,7 @@ class MedecinService {
 
   Future<Map<String, dynamic>> createMedecin(MedecinCreation medecinCreation) async {
     final response = await http.post(
-      Uri.parse('/medecins/signup'),
+      Uri.parse('$baseUrl/medecins/signup'),
       body: json.encode(medecinCreation.toJson()),
       headers: {
         'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ class MedecinService {
 
   Future<Map<String, dynamic>> updateMedecin(MedecinUpdate medecinUpdate, String email) async {
     final response = await http.put(
-      Uri.parse('/medecins/$email'),
+      Uri.parse('$baseUrl/medecins/$email'),
       body: json.encode(medecinUpdate.toJson()),
       headers: {
         'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ class MedecinService {
 
   Future<Map<String, dynamic>> desactivateMedecin(String email) async {
     final response = await http.put(
-      Uri.parse('/medecins/$email/desactivate'),
+      Uri.parse('$baseUrl/medecins/$email/desactivate'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -154,7 +154,7 @@ class MedecinService {
 
   Future<Map<String, dynamic>> deleteMedecin(String email) async {
     final response = await http.delete(
-      Uri.parse('/medecins/$email/delete'),
+      Uri.parse('$baseUrl/medecins/$email/delete'),
       headers: {
         'Content-Type': 'application/json'
       }

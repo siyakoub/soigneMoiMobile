@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../interfaces/user/login.dart';
+import '../services/user_service.dart';
+import 'homePage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -7,9 +10,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  String _email = '';
+  String _email = ''; // Utiliser late pour une initialisation ultérieure
   String _password = '';
-  String _userType = 'Client'; // Valeur par défaut pour le type d'utilisateur
+  String _userType = 'Client'; // Utiliser late pour une initialisation ultérieure
+
+  final UserService _userService = UserService();
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +25,14 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // Espace pour le logo
             Container(
-              height: 100, // Hauteur du logo (à ajuster selon vos besoins)
-              // Insérez votre logo ici (remplacez AssetImage par votre image)
+              height: 100,
               child: Image.asset(
                 'assets/img/logo.png',
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 24.0), // Espacement entre le logo et le formulaire
+            const SizedBox(height: 24.0),
             Form(
               key: _formKey,
               child: Column(
@@ -47,7 +50,9 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                     onChanged: (value) {
-                      _email = value;
+                      setState(() {
+                        _email = value;
+                      });
                     },
                   ),
                   const SizedBox(height: 16.0),
@@ -64,7 +69,10 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                     onChanged: (value) {
-                      _password = value;
+                      // setState est utilisé pour mettre à jour les valeurs
+                      setState(() {
+                        _password = value;
+                      });
                     },
                   ),
                   const SizedBox(height: 16.0),
@@ -79,20 +87,37 @@ class _LoginPageState extends State<LoginPage> {
                     }).toList(),
                     onChanged: (String? value) {
                       setState(() {
-                        _userType = value!;
+                        _userType = value ?? 'Client';
                       });
                     },
                   ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // Traitez les données du formulaire ici (envoyer à l'API, etc.)
-                        // Ici, vous pouvez accéder aux valeurs via _email, _password, _userType
-                        // Par exemple, imprimer les valeurs :
-                        print('Email: $_email');
-                        print('Mot de passe: $_password');
-                        print('Type d\'utilisateur: $_userType');
+                        Login loginData = Login(
+                          email: _email,
+                          password: _password,
+                          userType: _userType,
+                        );
+
+                        try {
+                          Map<String, dynamic> response =
+                          await _userService.loginUser(loginData);
+
+                          if (response['connected'] == true) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(userData: response),
+                              ),
+                            );
+                          } else {
+                            print("probleme");
+                          }
+                        } catch (e) {
+                          print('Erreur de connexion: $e');
+                        }
                       }
                     },
                     child: Text('Se connecter'),

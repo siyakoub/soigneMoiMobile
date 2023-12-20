@@ -18,7 +18,6 @@ class LogoPage extends StatelessWidget{
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Insérez votre logo ici (remplacez AssetImage par votre image)
             loadLogoImage(),
             const SizedBox(height: 20), // Espacement
           ],
