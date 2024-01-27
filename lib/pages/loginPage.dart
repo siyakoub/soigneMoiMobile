@@ -12,7 +12,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = ''; // Utiliser late pour une initialisation ultérieure
   String _password = '';
-  String _userType = 'Client'; // Utiliser late pour une initialisation ultérieure
+  String _userType = '';
 
   final UserService _userService = UserService();
 
@@ -75,22 +75,6 @@ class _LoginPageState extends State<LoginPage> {
                       });
                     },
                   ),
-                  const SizedBox(height: 16.0),
-                  DropdownButtonFormField<String>(
-                    value: _userType,
-                    items: <String>['Client', 'Administrateur', 'Médecin']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        _userType = value ?? 'Client';
-                      });
-                    },
-                  ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
                     onPressed: () async {
@@ -98,22 +82,25 @@ class _LoginPageState extends State<LoginPage> {
                         Login loginData = Login(
                           email: _email,
                           password: _password,
-                          userType: _userType,
+                          userType: 'Médecin'
                         );
-
                         try {
                           Map<String, dynamic> response =
                           await _userService.loginUser(loginData);
 
                           if (response['connected'] == true) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(userData: response),
-                              ),
-                            );
+                            if (response['medecin']['userType'] == 'Médecin'){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(userData: response),
+                                ),
+                              );
+                            } else {
+                              print("Erreur : Ce compte n'est pas enregistré comme un compte médecin");
+                            }
                           } else {
-                            print("probleme");
+                            print("Un problème est survenue lors de la connexion de l'utilisateur...");
                           }
                         } catch (e) {
                           print('Erreur de connexion: $e');

@@ -6,14 +6,14 @@ class Login {
   Login({
     required this.email,
     required this.password,
-    required this.userType,
+    required this.userType
   });
 
   Map<String, dynamic> toJson() {
     return {
       'email': email,
       'password': password,
-      'userType': userType,
+      'userType': userType
     };
   }
 }
