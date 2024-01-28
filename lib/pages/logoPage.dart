@@ -29,9 +29,9 @@ class LogoPage extends StatelessWidget{
   Widget loadLogoImage() {
     try {
       return Image.asset(
-        'assets/img/log_remove_bg.png',
-        width: 350, // Ajustez la largeur selon vos besoins
-        height: 350, // Ajustez la hauteur selon vos besoins
+        'assets/img/logoremovebg.png',
+        width: 200, // Ajustez la largeur selon vos besoins
+        height: 200, // Ajustez la hauteur selon vos besoins
       );
     } catch (e) {
       // En cas d'erreur lors du chargement de l'image, affichez un Text à la place

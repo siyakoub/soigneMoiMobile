@@ -1,89 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:soigne_moi_mobile/pages/home/widgets/header.dart';
 import 'package:soigne_moi_mobile/pages/home/widgets/listePrescription.dart';
+import 'package:soigne_moi_mobile/pages/UserInformationPage.dart';
+import 'package:soigne_moi_mobile/pages/newPrescriptionFormPage.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final Map<String, dynamic> userData;
 
   HomePage({required this.userData});
 
   @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+  double appBarHeight = AppBar().preferredSize.height;
+
+  @override
   Widget build(BuildContext context) {
-    String userType = userData.containsKey('medecin')
-        ? 'Medecin'
-        : userData.containsKey('administrateur')
-        ? 'Administrateur'
-        : 'Utilisateur Normal';
+    final user = _getUserData();
 
-    Map<String, dynamic> user = userData.containsKey('medecin')
-        ? userData['medecin']
-        : userData.containsKey('administrateur')
-        ? userData['administrateur']
-        : userData['utilisateur'];
-
-    final String nom = user['name'] ?? 'Nom inconnu';
-    final String firstName = user['firstName'] ?? 'Prénom inconnu';
-    final String matricule = user['matricule'].toString();
-
+    List<Widget> _screens = [
+      _buildHomePageScreen(user),
+      UserInformationPage(userData: widget.userData),
+    ];
 
     return Scaffold(
-      backgroundColor: Colors.greenAccent,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                HeaderSection(
-                  name: nom, matricule: matricule, firstName: firstName,
-                ),
-                const ListePrescription(),
-              ],
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: NavigationBar(),
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: _buildBottomNavigationBar(),
+      floatingActionButton: _buildFloatingActionButton(user),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
-  Widget NavigationBar() {
-    return Container(
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 5,
-              blurRadius: 10
-            ),
-          ],
+
+  Map<String, dynamic> _getUserData() {
+    return widget.userData.containsKey('medecin')
+        ? widget.userData['medecin']
+        : widget.userData.containsKey('administrateur')
+        ? widget.userData['administrateur']
+        : widget.userData['utilisateur'];
+  }
+
+  BottomNavigationBar _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      selectedItemColor: Colors.orangeAccent,
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      unselectedItemColor: Colors.grey.withOpacity(0.7),
+      type: BottomNavigationBarType.fixed,
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      items: const [
+        BottomNavigationBarItem(
+          label: 'Home',
+          icon: Icon(Icons.home, size: 30,),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          child: BottomNavigationBar(
-            selectedItemColor: Colors.orangeAccent,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-            unselectedItemColor: Colors.grey.withOpacity(0.7),
-            type: BottomNavigationBarType.fixed,
-            items: const [
-              BottomNavigationBarItem(
-                  label: 'Home',
-                  icon: Icon(Icons.home, size: 30,),
-              ),
-              BottomNavigationBarItem(
-                  label: 'Prescription',
-                  icon: Icon(Icons.book_online, size: 30,)
-              ),
-              BottomNavigationBarItem(
-                  label: 'Account',
-                  icon: Icon(Icons.account_circle, size: 30,)
-              ),
-            ],
-          ),
+        BottomNavigationBarItem(
+            label: 'Account',
+            icon: Icon(Icons.account_circle, size: 30,)
         ),
+      ],
+    );
+  }
+
+  FloatingActionButton? _buildFloatingActionButton(Map<String, dynamic> user) {
+    if (_selectedIndex == 0 && user.containsKey('email')) {
+      return FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NewPrescriptionFormPage(medecinEmail: user['email'])),
+          );
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add),
+      );
+    }
+    return null;
+  }
+
+  Widget _buildHomePageScreen(Map<String, dynamic> user) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          HeaderSection(
+            name: user['name'] ?? 'Nom inconnu',
+            firstName: user['firstName'] ?? 'Prénom inconnu',
+            matricule: user['matricule'].toString(),
+          ),
+          // Utilisation de la hauteur de la barre d'app
+          ListePrescription(medecinId: user['medecin_id'], taillebottomBar: appBarHeight),
+        ],
       ),
     );
   }

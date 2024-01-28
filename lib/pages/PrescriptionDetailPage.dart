@@ -1,46 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:soigne_moi_mobile/services/user_service.dart'; // Assurez-vous d'importer votre service utilisateur
 
-class PrescriptionDetailPage extends StatelessWidget {
-  final String name;
+class PrescriptionDetailPage extends StatefulWidget {
+  final String id;
+  final int user_id;
+  final String list;
+  final String dateDebut;
+  final String dateFin;
 
-  const PrescriptionDetailPage({super.key, required this.name});
+  const PrescriptionDetailPage({super.key, required this.id, required this.user_id, required this.dateDebut, required this.dateFin, required this.list});
+
+  @override
+  _PrescriptionDetailPageState createState() => _PrescriptionDetailPageState();
+}
+
+class _PrescriptionDetailPageState extends State<PrescriptionDetailPage> {
+  final UserService userService = UserService(); // Remplacez par votre instance de service
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        title: Text('Prescription N°${widget.id}'),
+        backgroundColor: Colors.green, // Couleur de l'AppBar
       ),
-      body: Row (
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: EdgeInsets.all(10), // Ajoutez un padding pour éviter que le texte touche les bords
-                  child: Text(
-                    'Description : ',
-                    style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.left, // Aligner le texte à droite
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(10), // Ajoutez un padding pour éviter que le texte touche les bords
-                  child: Text(
-                    'L\'API $name est utilisée pour\nconsulté les données de météo mis à disposition\ngratuitement',
-                    style: const TextStyle(fontSize: 15, fontStyle: FontStyle.normal),
-                    textAlign: TextAlign.left, // Aligner le texte à droite
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: userService.getUserById(widget.user_id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erreur: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('Aucune information disponible pour l\'utilisateur'));
+          }
+
+          var user = snapshot.data!['user'];
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                _buildCard('Patient', '${user['name']} ${user['firstName']}', Icons.person),
+                _buildCard('Email', user['email'], Icons.email),
+                _buildCard('Liste des médicaments', widget.list, Icons.medication),
+                _buildCard('Début du traitement', widget.dateDebut, Icons.calendar_today),
+                _buildCard('Fin du traitement', widget.dateFin, Icons.calendar_today),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCard(String title, String content, IconData icon) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blueGrey),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(content),
       ),
     );
   }

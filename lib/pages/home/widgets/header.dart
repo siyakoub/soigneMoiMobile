@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class HeaderSection extends StatelessWidget {
-
   final String name;
   final String firstName;
   final String matricule;
@@ -10,11 +9,16 @@ class HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top,
         left: 25,
         right: 25,
+        bottom: 20, // Ajout d'un padding en bas pour un meilleur espacement
+      ),
+      decoration: BoxDecoration(
+        color: Colors.green, // Couleur de fond de la section d'en-tête
+        borderRadius: BorderRadius.circular(20), // Rayon pour arrondir les coins
       ),
       child: Row(
         children: [
